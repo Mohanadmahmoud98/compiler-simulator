@@ -1,0 +1,1319 @@
+
+package scannernew;
+
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
+
+class scanner
+{
+    String reversed_words[]={"if","then","else","end","repeat","until","read","write"};
+    String Special_Symbols[]={"+","-","*","/","=","<","(",")",";",":="};
+    String state[]={"start","ID","number","Assignment","done","comment"};
+    String s="start";
+    String ps="null";
+    int n=1;
+    int ex=0;
+    int a=0;
+    int b=0;
+    int c=0;
+    int d=0;
+    int counterremove=0;
+    int vvv=0;
+    public int index=0;
+    static int indextokens=0;
+    String temptok [][];
+   int ind=0;
+    String outcha[];
+     String token[];
+    String outnum[];
+    String outcom[];
+    String outass[];
+    static ArrayList<String> tokens = new ArrayList<>(); 
+    char test;
+    String line=null;
+    int checkchar(String str,int v)
+{
+     for(int i=v;i<str.length();i++)
+    {
+        if(str.charAt(i)=='}'){
+           
+            return i;
+    }
+    }
+    return -1;
+}
+    boolean checkres(String str)
+    {
+        for (String reversed_word : reversed_words) {
+            if (str.equals(reversed_word)) {
+             //   System.out.println("scannernew.scanner.checkres()");
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    void mainfn () throws FileNotFoundException, IOException
+{
+   
+    outcom=new String[15];
+    outass=new String[15];
+    outcha=new String[15];
+    outnum=new String[15];
+    temptok=new String [100][100];
+  
+    try{
+ FileReader fr=new FileReader("code.txt.txt");
+ BufferedReader br=new BufferedReader(fr);
+ //line=br.readLine();
+ while((line=br.readLine())!=null)
+ {
+     if(line.isEmpty())
+     {
+         continue;
+     }
+     
+     for(int i=0;i<line.length();i++)
+     {
+        if(line.charAt(i)==' ' || line.charAt(i)=='\t')
+     {
+         s="done";
+         
+     }
+     if(Character.isAlphabetic(line.charAt(i)))
+     {
+         s="ID";
+         
+     }
+     if(Character.isDigit(line.charAt(i)))
+     {
+        s="num"; 
+     }
+     if (line.charAt(i)=='{')
+     {
+         s="com";
+     }
+     
+     if(line.charAt(i)=='*'|| line.charAt(i)=='/'|| line.charAt(i)=='-'|| line.charAt(i)=='+'|| line.charAt(i)=='('|| line.charAt(i)==')')
+     {
+       s="ass";
+       ex=0;
+     }
+     if(line.charAt(i)==':')
+     {
+         s="ass";
+         ex=1;
+     }
+     if(line.charAt(i)=='=')
+     {
+         s="ass";
+         ex=2;
+     }
+      if(line.charAt(i)==';')
+     {
+         s="ass";
+         ex=3;
+     }
+       if(line.charAt(i)=='<'||line.charAt(i)=='>')
+     {
+         s="ass";
+         ex=4;
+     }
+     if("done".equals(s) && "null".equals(ps))
+     {
+          ps="null";
+        // continue;
+     }
+      if("done".equals(s) && "Start".equals(ps))
+     {
+          ps="null";
+          index++;
+         /*  if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          index++;
+          a++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          index++;
+          b++;
+          }*/
+        // continue;
+     }
+     if("done".equals(s) && "ID".equals(ps))
+     {
+           ps="null";
+         a++;
+         index++;
+       
+         //continue;
+     }
+     if("done".equals(s) && "Start".equals(ps))
+     {
+           ps="null";
+         a++;
+         index++;
+       
+         //continue;
+     }
+     
+     if("done".equals(s) && "com".equals(ps))
+     {
+          ps="null";
+         c++;
+          index++;
+         
+     }
+     if("done".equals(s) && "ass".equals(ps))
+     {
+          ps="null";
+         d++;
+          index++;
+        
+     }
+     if("done".equals(s) && "num".equals(ps))
+     {
+          ps="null";
+         b++;
+         index++;
+         
+     }
+     
+     if("ID".equals(s)&&"ID".equals(ps))
+     {
+         outcha[index]=outcha[index]+line.charAt(i);
+         ps="ID";
+     }
+     if("ID".equals(s)&&"Start".equals(ps)&&Character.isDigit(line.charAt(i-1)))
+     {
+         index++;
+         outcha[index]=line.charAt(i)+"";
+         ps="ID";
+     }
+     if("ID".equals(s)&&"Start".equals(ps))
+     {
+         
+         outcha[index]=outcha[index]+line.charAt(i);
+         ps="ID";
+     }
+     
+      if("ID".equals(s)&&"num".equals(ps))
+     {
+         b++;
+         index++;
+         outcha[index]=line.charAt(i)+"";
+         ps="Start";
+     }
+      if("ID".equals(s) && "null".equals(ps))
+     {
+         outcha[index]=line.charAt(i)+"";
+         ps="Start";
+         
+     }
+      if("num".equals(s)&&"num".equals(ps))
+     {
+         outnum[index]=outnum[index]+line.charAt(i);
+         ps="num";
+     }
+      if("num".equals(s)&&"Start".equals(ps))
+     {
+         outnum[index]=outnum[index]+line.charAt(i);
+         ps="num";
+     }
+      if("num".equals(s)&&"ID".equals(ps))
+     {
+         a++;
+         index++;
+         outnum[index]=outnum[index]+"";
+         ps="Start";
+     }
+     if("num".equals(s) && "null".equals(ps))
+     {
+         outnum[index]=line.charAt(i)+"";
+         ps="Start";
+         
+     }
+     
+     
+      
+      if("com".equals(s) && "null".equals(ps))
+     {
+         //System.out.println("zzz");
+         index=index;
+         outcom[index]=line.charAt(i)+"";
+         c++;
+         index++;
+         ps="null";
+         i=checkchar(line,i);
+         
+     }
+      if("com".equals(s) && "ID".equals(ps))
+     {
+          index++;
+         outcom[index]=line.charAt(i)+"";
+         c++;
+        
+         index++;
+         a++;
+         ps="null";
+         i=checkchar(line,i);
+         
+     }
+       if("com".equals(s) && "num".equals(ps))
+     {
+          index++;
+         outcom[index]=line.charAt(i)+"";
+         c++;
+         b++;
+        
+         index++;
+         ps="null";
+         i=checkchar(line,i);
+         
+     }
+       if("com".equals(s) && "ass".equals(ps))
+     {
+          index++;
+         outcom[index]=line.charAt(i)+"";
+         c++;
+         b++;
+        
+         index++;
+         ps="null";
+         i=checkchar(line,i);
+         
+     }
+       if("ass".equals(s)&& "null".equals(ps)&& ex==0)
+       {
+          outass[index]=line.charAt(i)+"";
+         ps="null";
+          d++;
+           index++;
+       }
+        if("ass".equals(s)&& "Start".equals(ps)&& ex==0)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+           /*if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          a++;
+           index++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          b++;
+           index++;
+          }*/
+          d++;
+          index++;
+           
+          
+       }
+        
+       if("ass".equals(s)&& "num".equals(ps)&& ex==0)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          b++;
+          d++;
+           
+          index++;
+       }
+        if("ass".equals(s)&& "ID".equals(ps)&& ex==0)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          a++;
+          d++;
+           
+          index++;
+       }
+        
+        if("ass".equals(s)&& "null".equals(ps)&& ex==1)
+       {
+          outass[index]=line.charAt(i)+"=";
+         ps="null";
+         d++;
+         i++;
+         index++;
+         
+         
+          
+       }
+         if("ass".equals(s)&& "Start".equals(ps)&& ex==1)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"=";
+          ps="null";
+         /*  if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          a++;
+           index++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          b++;
+           index++;
+          }*/
+          d++;
+          index++;
+          i++;
+          
+       }
+         if("ass".equals(s)&& "num".equals(ps)&& ex==1)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"=";
+          ps="null";
+          b++;
+          index++;
+          d++;
+          i++;
+       }
+        if("ass".equals(s)&& "ID".equals(ps)&& ex==1)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"=";
+          ps="null";
+          a++;
+          index++;
+           
+          d++;
+          i++;
+       }  
+        
+        
+        if("ass".equals(s)&& "null".equals(ps)&& ex==2)
+       {
+          outass[index]=line.charAt(i)+"";
+         ps="null";
+         index++;
+         d++;
+          
+       }
+        if("ass".equals(s)&& "Start".equals(ps)&& ex==2)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          /* if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          a++;
+           index++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          b++;
+           index++;
+          }*/
+          d++;
+           index++;
+       }
+         if("ass".equals(s)&& "num".equals(ps)&& ex==2)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          b++;
+           index++;
+          d++;
+          
+       }
+        if("ass".equals(s)&& "ID".equals(ps)&& ex==2)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          a++;
+           index++;
+          d++;
+          
+          
+       }
+        
+        if("ass".equals(s)&& "null".equals(ps)&& ex==3)
+       {
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          d++;
+           index++;
+         
+          
+       }
+        if("ass".equals(s)&& "Start".equals(ps)&& ex==3)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          /*if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          a++;
+           index++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          b++;
+           index++;
+          }*/
+          d++;
+           index++;
+          
+       }
+        if("ass".equals(s)&& "num".equals(ps)&& ex==3)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          b++;
+           index++;
+          d++;
+           
+          
+       }
+        if("ass".equals(s)&& "ID".equals(ps)&& ex==3)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          a++;
+          d++;
+           index++;
+
+          
+       }
+          if("ass".equals(s)&& "null".equals(ps)&& ex==4)
+       {
+          outass[index]=line.charAt(i)+"";
+         ps="null";
+          d++;
+           index++;
+       }
+        if("ass".equals(s)&& "Start".equals(ps)&& ex==4)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          /* if(Character.isAlphabetic(line.charAt(i-1)))
+          {
+          a++;
+           index++;
+          }
+          if(Character.isDigit(line.charAt(i-1)))
+          {
+          b++;
+           index++;
+          }*/
+          d++;
+          index++;
+          
+       }
+        if("ass".equals(s)&& "num".equals(ps)&& ex==4)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          b++;
+           index++;
+          d++;
+       
+       }
+        if("ass".equals(s)&& "ID".equals(ps)&& ex==4)
+       {
+           index++;
+          outass[index]=line.charAt(i)+"";
+          ps="null";
+          a++;
+           index++;
+          d++;
+ 
+       }      
+ } 
+     System.out.println("Line:"+n);
+   if(index==0 && Character.isAlphabetic(line.charAt(0)))
+     {
+         if(checkres(outcha[0])==true)
+           {
+               System.out.println(outcha[0]+" is Reserved word");
+               temptok[n-1][ind]=outcha[0];
+               ind++;
+               indextokens++;
+               vvv++;
+           }
+           else
+           {
+               System.out.println(outcha[0]+" is identefier");
+                temptok[n-1][ind]=outcha[0];
+               ind++;
+               indextokens++;
+               vvv++;
+           } 
+     }
+      /*  for(int j=0;j<a;j++)
+        {
+          if(checkres(outcha[j])==true)
+           {
+               System.out.println(outcha[j]+" is Reserved word");
+           }
+           else
+           
+               System.out.println(outcha[j]+" is identefier");
+           
+               
+        }
+        for(int j=0;j<b;j++)
+        {
+            System.out.println(outnum[j]+" is number");
+        }
+        for(int j=0;j<c;j++)
+        {
+           System.out.println(outcom[j]+"} is comment");  
+        }
+        for(int j=0;j<d;j++)
+        {
+            System.out.println(outass[j]+" is Sympol");
+        }*/
+      for(int j=0;j<15;j++)
+      {
+          if(outcha[j]!=null && vvv==0)
+          {
+              if(checkres(outcha[j])==true)
+           {
+               System.out.println(outcha[j]+" is Reserved word");
+               //System.out.println ("index is"+j);
+                temptok[n-1][ind]=outcha[j];
+               ind++;
+               indextokens++;
+           }
+             else
+              {
+               System.out.println(outcha[j]+" is identefier");
+              //System.out.println ("index is"+j);
+               temptok[n-1][ind]=outcha[j];
+               indextokens++;
+               ind++;
+              }
+          }
+          if(outass[j]!=null)
+          {
+            System.out.println(outass[j]+" is Sympol"); 
+            //System.out.println ("index is"+j);
+             temptok[n-1][ind]=outass[j];
+               ind++;
+               indextokens++;
+          }
+          if(outnum[j]!=null)
+          {
+           System.out.println(outnum[j]+" is number");
+           //System.out.println ("index is"+j);
+            temptok[n-1][ind]=outnum[j];
+               ind++;
+               indextokens++;
+          }
+          if(outcom[j]!=null)
+          {
+           System.out.println(outcom[j]+"} is comment");   
+           //System.out.println ("index is"+j);
+            temptok[n-1][ind]=outcom[j]+"}";
+               ind++;
+               indextokens++;
+          }
+          
+      }
+        for(int j=0;j<15;j++)
+        {
+            outcha[j]=null;
+            outnum[j]=null;
+            outass[j]=null;
+            outcom[j]=null;
+        }
+    ind=0;    
+     a=0;
+     b=0;
+     c=0;
+     d=0;
+     ex=0;
+     s="Start";
+     ps="null";
+     n++;
+     index=0;
+     vvv=0;
+ }
+System.out.println("-----------------------------");
+/* for(int b=0;b<30;b++)
+ {
+     for(int v=0;v<100;v++)
+     {
+         if(temptok[b][v]!=null)
+         {
+             System.out.println(temptok[b][v]);
+         }
+     }
+     
+ }*/
+  //token=new String[100];
+ for(int b=1;b<=n;b++)
+ {
+     for(int v=0;v<100;v++)
+     {
+         if(temptok[b-1][v]!=null)
+         {
+             tokens.add(temptok[b-1][v]);
+         }
+     }
+     
+ }
+System.out.println("-----------------------------");
+ System.out.println(tokens);
+ for(int j=0;j<tokens.size();j++)
+        {
+            if("{}".equals(tokens.get(j)))
+            {
+                tokens.remove(j);
+                counterremove++;
+                j--;
+            }
+        }
+  System.out.println(tokens);
+ indextokens=indextokens-counterremove;
+    }
+    catch(FileNotFoundException ex)
+    {
+        
+    }
+    
+}
+   
+    public ArrayList<String> gettoken()
+    {
+        return tokens;
+    }
+}
+class parser
+{
+    scanner scan=new scanner();
+    ArrayList<String> token=scanner.tokens;
+    int index=scanner.indextokens;
+    int i=0;
+    String output[];
+    int outputinex=0;
+    int exep=0;
+    int counterremove=0;
+    String find;
+    int exepc=0;
+    int iex=0;
+    String reversed_words[]={"if","then","else","end","repeat","until","read","write"};
+    boolean match(String expected,String s)
+    {
+        return expected.equals(s);
+        
+    }
+    boolean checkres(String str)
+    {
+        for (String reversed_word : reversed_words) {
+            if (str.equals(reversed_word)) {
+                {//   System.out.println("scannernew.scanner.checkres()");
+                return true;
+                }
+                
+            }
+        }
+        return false;
+    }
+    void check(String s)
+    {
+       
+        if(Character.isAlphabetic(s.charAt(0)) && checkres(s)==false)
+           find= "ID";
+        else if(Character.isDigit(s.charAt(0))) 
+            find="Number";
+        else
+            find="error";
+        
+    }
+    void main()
+    {
+        System.out.println(index);
+        /*for (int j = 0; j < 58; j++) {
+            token.add(scan.tokens.get(j));
+        }*/
+          System.out.println(token);
+       output=new String[5000];
+       /* for(int j=0;j<index;j++)
+        {
+            if("{}".equals(token.get(j)))
+            {
+                token.remove(j);
+                counterremove++;
+            }
+        }*/
+        
+           System.out.println(token.size());
+        
+        program();
+         System.out.println("-------------------------------------------------------");
+        for(int j=0;j<outputinex;j++)
+        {
+            System.out.println(output[j]);
+        }
+    }
+    void program()
+    {
+        
+        output[outputinex]="Program is found";
+        outputinex++;
+        stmt_sequence();
+    }
+    void stmt_sequence()
+    {
+        
+        output[outputinex]="stmt_sequence is found";
+        outputinex++;
+        statment();
+         if(i<=token.size()-1)
+            {
+             
+        for(int j=i;j<token.size();j++)
+        {
+           if(i<=token.size()-1)
+        {
+        boolean flag=match(";",token.get(i));
+        
+        if(flag==true)
+        {
+            
+            i++;
+            output[outputinex]=";";
+            iex++;
+        outputinex++;
+            if(i!=index)
+            statment();
+           j=i;
+           
+        }
+        
+        
+        else if(iex!=0){
+           
+           if(!"error to find ;".equals(output[outputinex-2]))
+              {
+                  if(!"repeat".equals(token.get(i-1)) );
+                  {
+                      
+            output[outputinex]="error to find ;";
+            outputinex++;
+                      
+                  } 
+              statment();
+                  
+              
+            //System.out.println("error");
+        
+              }
+    }
+        iex=0;
+        }
+        }
+            }
+    }
+    void statment()
+    {
+         if(i<=token.size()-1)
+        {
+        check(token.get(i));
+         output[outputinex]="statment is found";
+        outputinex++;
+        
+        if("if".equals(token.get(i)))
+        {
+            if_stmt();
+            
+         if(i<=token.size()-1)
+        {
+         if("repeat".equals(token.get(i)))
+        {
+            repeat_stmt();
+        }
+        
+         else if("ID".equals(find) && checkres(token.get(i))==false)
+         {
+             assign_stmt();
+         }
+        else if("read".equals(token.get(i))|| "end".equals(token.get(i)))
+        {
+            read_stmt();
+        }
+        else if("write".equals(token.get(i)))
+        {
+            write_stmt();
+        }
+            
+        }
+        }
+        else if("repeat".equals(token.get(i)))
+        {
+            repeat_stmt();
+        }
+        
+         else if("ID".equals(find) && checkres(token.get(i))==false)
+         {
+             assign_stmt();
+         }
+        else if("read".equals(token.get(i))|| "end".equals(token.get(i)))
+        {
+            read_stmt();
+        }
+        else if("write".equals(token.get(i)))
+        {
+            write_stmt();
+        }
+        
+    }
+    }
+   void if_stmt()
+    {
+        if(i<=token.size()-1)
+        {
+        output[outputinex]="if statment is found";
+        outputinex++;
+    boolean flag= match("if",token.get(i));
+   
+    if(flag==false)
+    {
+        output[outputinex]="error to find if";
+            outputinex++;
+      //System.out.println("error");  
+    }
+    else if(flag==true)
+    {
+        output[outputinex]="if";
+            outputinex++;
+        i++;
+      //System.out.println("done");  
+    }
+    exp();
+     if(i<=token.size()-1)
+        {
+    boolean flag2= match("then",token.get(i));
+    
+    if(flag2==false)
+    {
+        output[outputinex]="error to find then";
+            outputinex++;
+      //System.out.println("error");  
+    } 
+    else if(flag2==true)
+    {
+        output[outputinex]="then";
+            outputinex++;
+        i++;
+     // System.out.println("done");  
+    } 
+    stmt_sequence();
+    if(i<=token.size()-1)
+        {
+    boolean flag3=match("else",token.get(i));
+    if(flag3==true)
+    {
+        i++;
+         output[outputinex]="else";
+            outputinex++;
+        stmt_sequence();
+      
+        if(i<=token.size()-1)
+        {
+        boolean flag4=match("end",token.get(i));
+        if(flag4==true)
+    {
+        
+        output[outputinex]="end";
+            outputinex++;
+            
+            
+        i++;
+         
+       // System.out.println("done");
+    }  
+        else
+        {
+            output[outputinex]="error to find end";
+            outputinex++;
+        }
+            //System.out.println("error");
+            
+    }
+    }
+    else
+    {
+        boolean flag5=match("end",token.get(i));
+        if(flag5==true)
+    {
+        output[outputinex]="end";
+            outputinex++;
+        i++;
+       // System.out.println("done");
+    }  
+        else
+        {
+            output[outputinex]="error to find end";
+            outputinex++;
+        }
+    }
+     
+    }
+    }
+        }
+    }
+   
+   
+   
+    void repeat_stmt()
+    {
+         if(i<=token.size()-1)
+        {
+        output[outputinex]="repeat statment is found";
+        outputinex++;
+      boolean flag=match("repeat",token.get(i));
+      
+      if(flag==false)
+      {
+           output[outputinex]="error to find repeat";
+            outputinex++;
+       // System.out.println("error");     
+      }
+      else if(flag==true)
+      {
+        //System.out.println("done"); 
+          output[outputinex]="repeat";
+            outputinex++;
+        i++;
+      }
+      stmt_sequence();
+       if(i<=token.size()-1)
+        {
+      boolean flag2=match("until",token.get(i));
+      
+      if(flag2==false)
+      {
+           output[outputinex]="error to find until ";
+        outputinex++;
+        //System.out.println("error");     
+      }
+      else if(flag2==true)
+      {
+          output[outputinex]="until";
+            outputinex++;
+          i++;
+        //System.out.println("done");     
+      }
+      exp();
+    }
+        }
+    }
+    void assign_stmt()
+    {
+        output[outputinex]="assign statment is found";
+        outputinex++;
+        check(token.get(i));
+        //String D=tokens.get(i);
+        if(!"ID".equals(find))
+        {
+             output[outputinex]="error to find ID ";
+        outputinex++;
+            //System.out.println("error");
+        }
+        else 
+        {
+             output[outputinex]="ID is found ";
+        outputinex++;
+             i++;
+        }
+       
+       boolean flag= match(":=",token.get(i));
+       
+       if(flag==false)
+      {
+            output[outputinex]="error to find := ";
+        outputinex++;
+       // System.out.println("error");     
+      }
+      else if(flag==true)
+      {
+           output[outputinex]=" found := ";
+        outputinex++;
+          
+          i++;
+        //System.out.println("done");     
+      }
+       exp();
+    }
+    void read_stmt()
+    {
+        output[outputinex]="read statment is found";
+        outputinex++;
+        boolean flag= match("read",token.get(i));
+       
+       if(flag==false)
+      {
+           output[outputinex]="error to find read ";
+        outputinex++;
+        //System.out.println("error");     
+      }
+       else if(flag==true)
+      {
+          output[outputinex]="read";
+            outputinex++;
+          i++;
+       // System.out.println("done");     
+      }
+     //  String D=token.get(i);
+     check(token.get(i));
+        if(!"ID".equals(find))
+        {
+            output[outputinex]="error to find ID ";
+        outputinex++;
+          //  System.out.println("error");
+        }
+        else if("ID".equals(find))
+        {
+             output[outputinex]=" ID ";
+        outputinex++;
+            i++;
+           /* output[outputinex]=tokens.get(i)+" :ID is found";
+        outputinex++;*/
+          //  System.out.println("error");
+        }
+        
+       
+        
+    }
+     void write_stmt()
+    {
+        output[outputinex]="write statment is found";
+        outputinex++;
+       boolean flag=match("write",token.get(i));
+      
+      if(flag==false)
+      {
+          output[outputinex]="error to find write ";
+        outputinex++;
+        //System.out.println("error");     
+      } 
+      else
+      {
+          i++;
+           output[outputinex]="write";
+            outputinex++;
+       // System.out.println("error");     
+      } 
+      exp();
+    }
+    
+    void exp()
+    {
+        output[outputinex]="exp is found";
+        outputinex++;
+       simple_exp();
+       
+      if(comparison_op()==true)
+      {
+          simple_exp();
+          
+      }
+       
+    }
+     boolean comparison_op()
+    {
+        
+        if( i<=token.size()-1 &&(match("<",token.get(i))==true || match(">",token.get(i))==true ||match("=",token.get(i))==true) )
+        {
+            output[outputinex]="comparison_op is found";
+        outputinex++;
+            i++;
+            return true;
+        }
+        else
+            return false;
+    }
+    void simple_exp()
+    {
+        exepc=0;
+        output[outputinex]="simple_exp is found";
+        outputinex++;
+        term();
+        
+        for(int j=i;j<token.size()-1;j++)
+        {
+           if("-".equals(token.get(i))||"+".equals(token.get(i)) ) 
+      { 
+        addop();
+        term();
+        }
+        }
+    }
+   void addop()
+   {
+       if(i<=token.size()-1 && outputinex<5000)
+        {
+            
+       output[outputinex]="addop is found";
+        outputinex++;
+        
+       boolean flag1=match("+",token.get(i));
+      
+       if(flag1==true)
+       {
+           i++;
+          // System.out.println("done");
+       }
+       else
+       {
+            boolean flag2=match("-",token.get(i));
+            
+           if(flag2==false)
+       {
+            output[outputinex]="NO + OR - found";
+        outputinex++;
+          // System.out.println("error");
+       }
+           else
+                i++;
+               // System.out.println("done");
+       }
+      
+   }
+   }
+    void term()
+    {
+         if(i<=token.size()-1)
+         {
+        output[outputinex]="term is found";
+        outputinex++;
+      factor();
+      
+        for(int j=i;j<token.size()-1;j++)
+        {
+            if(!"error".equals(find))
+      {
+           if("*".equals(token.get(i))||"/".equals(token.get(i)) ) 
+      { 
+        mulop();
+        factor();
+        }  
+    }}
+    }}
+    void mulop()
+    {
+        if(!"NO * OR / found".equals(output[outputinex-1]))
+        {
+        if(i<=token.size()-1)
+        {
+         boolean flag1=match("*",token.get(i));
+         if(flag1==true)
+       {
+           output[outputinex]="mulop is found";
+        outputinex++;
+           i++;
+          // System.out.println("error");
+       }
+           else
+         {
+             boolean flag2=match("/",token.get(i));
+
+                 if(flag2==false)
+                 {
+                    //System.out.println("error");
+                     output[outputinex]="NO * OR / found";
+                     outputinex++;
+                 }
+                 else 
+                 {
+                    output[outputinex]="mulop is found";
+        outputinex++;
+                     i++;
+                    // System.out.println("done");
+                 }
+         }
+    }
+        }
+    }
+    void factor()
+    {
+       if("term is found".equals(output[outputinex-1])|| "mulop is found".equals(output[outputinex-1]))
+       {
+        check(token.get(i));
+        //check(token.get(i));
+         output[outputinex]="factor is found";
+        outputinex++;
+        if(i<=token.size()-1)
+        {
+      boolean flag1=match("(",token.get(i)); 
+      if(flag1==true)
+      {
+          i++;
+          
+          exp();
+          boolean flag2=match(")",token.get(i));
+          if(flag2==true)
+      {
+          i++;
+      }
+          if(flag2==false)
+      {
+           output[outputinex]="error to find )";
+        outputinex++;
+        //  System.out.println("error");
+         exep=1;
+      }    
+      }
+      else if(flag1==false || exep==1)
+      {
+        if("Number".equals(find))
+        {
+            i++;
+             output[outputinex]="number is found";
+        outputinex++;
+        
+            //System.out.println("done");
+            
+        }
+        else if ("ID".equals(find) && checkres(token.get(i))==false)
+        {
+            i++;
+             //System.out.println("done");
+              output[outputinex]="ID is found";
+        outputinex++;
+        }
+        else{
+            if(!":=".equals(token.get(i)))
+            {
+                exepc++;
+                find="error";
+             output[outputinex]="error to find (exp) OR number OR ID";
+             
+        outputinex++;
+            }
+        }
+        //  System.out.println("error");  
+      }
+    }
+    }
+    }
+}
+public class Scannernew {
+
+    
+    public static void main(String[] args) throws IOException {
+      scanner sc=new scanner();
+      sc.mainfn();
+      parser pr=new parser();
+      pr.main();
+      
+    }
+    
+}
